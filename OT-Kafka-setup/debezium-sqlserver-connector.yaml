@@ -1,0 +1,47 @@
+# KafkaConnector CR - Debezium SQL Server CDC Connector
+# Monitors: MySimpleDB_Tsql database on MS SQL Server 2022
+# Namespace: debezium-demo
+#
+# IMPORTANT: Update the following before deploying:
+#   - database.hostname: Your SQL Server IP/hostname
+#   - database.user: Your database username
+#   - database.password: Your database password
+#
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: sqlserver-cdc-new
+  namespace: debezium-demo
+  labels:
+    strimzi.io/cluster: debezium-connect
+spec:
+  class: io.debezium.connector.sqlserver.SqlServerConnector
+  tasksMax: 1
+  config:
+    # Database connection - UPDATE THESE VALUES
+    database.hostname: "<SQL_SERVER_HOST>"
+    database.port: "1433"
+    database.user: "<DB_USER>"
+    database.password: "<DB_PASSWORD>"
+    database.names: "MySimpleDB_Tsql"
+    
+    # Debezium connector settings
+    topic.prefix: "dbserver1"
+    database.encrypt: "false"
+    database.trustServerCertificate: "true"
+    
+    # Schema history - using memory (for Kafka 4.x compatibility)
+    schema.history.internal: "io.debezium.relational.history.MemorySchemaHistory"
+    
+    # Snapshot mode - schema_only streams only new changes
+    # Use "initial" to also capture existing data
+    snapshot.mode: "schema_only"
+    
+    # Table include list - only capture truck_locations
+    table.include.list: "dbo.truck_locations"
+    
+    # Tombstones and deletes
+    tombstones.on.delete: "true"
+    
+    # Poll interval
+    poll.interval.ms: "1000"

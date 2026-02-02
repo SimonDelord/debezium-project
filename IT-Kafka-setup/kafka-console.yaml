@@ -1,0 +1,15 @@
+# AMQ Streams Console CR (IT Environment)
+# Provides a web UI for monitoring Kafka clusters
+# Namespace: it-kafka-demo
+apiVersion: console.streamshub.github.com/v1alpha1
+kind: Console
+metadata:
+  name: example-console
+  namespace: it-kafka-demo
+spec:
+  hostname: streams-console-it-kafka-demo.apps.<CLUSTER_DOMAIN>
+  kafkaClusters:
+    - name: my-cluster
+      namespace: it-kafka-demo
+      listener: plain
+

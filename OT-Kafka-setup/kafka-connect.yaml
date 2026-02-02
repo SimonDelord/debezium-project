@@ -1,0 +1,39 @@
+# KafkaConnect CR - Debezium Kafka Connect Cluster
+# Builds a custom image with Debezium SQL Server connector
+# Namespace: debezium-demo
+#
+# NOTE: Uses Debezium 3.0.0.Final for Kafka 4.x compatibility
+#
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnect
+metadata:
+  name: debezium-connect
+  namespace: debezium-demo
+  annotations:
+    strimzi.io/use-connector-resources: "true"
+spec:
+  version: 4.1.0
+  replicas: 1
+  bootstrapServers: my-cluster-kafka-bootstrap:9092
+  config:
+    group.id: debezium-connect-cluster
+    offset.storage.topic: debezium-connect-offsets
+    config.storage.topic: debezium-connect-configs
+    status.storage.topic: debezium-connect-status
+    offset.storage.replication.factor: 1
+    config.storage.replication.factor: 1
+    status.storage.replication.factor: 1
+    # Use StringConverter for Kafka 4.x compatibility
+    key.converter: org.apache.kafka.connect.storage.StringConverter
+    value.converter: org.apache.kafka.connect.storage.StringConverter
+  build:
+    output:
+      type: docker
+      image: image-registry.openshift-image-registry.svc:5000/debezium-demo/debezium-connect:latest
+    plugins:
+      - name: debezium-sqlserver-connector
+        artifacts:
+          - type: maven
+            group: io.debezium
+            artifact: debezium-connector-sqlserver
+            version: 3.0.0.Final

@@ -1,0 +1,37 @@
+# KafkaMirrorMaker2 CR - Replicates data between Kafka clusters
+# Mirrors topics from OT cluster (cluster-a) to IT cluster (cluster-b)
+# Namespace: debezium-demo
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaMirrorMaker2
+metadata:
+  name: my-mm2-cluster
+  namespace: debezium-demo
+spec:
+  version: 4.1.0
+  replicas: 1
+  connectCluster: cluster-b
+  clusters:
+    # Source cluster - OT Kafka (debezium-demo namespace)
+    - alias: cluster-a
+      bootstrapServers: my-cluster-kafka-bootstrap.debezium-demo.svc.cluster.local:9092
+    # Target cluster - IT Kafka (external via loadbalancer)
+    - alias: cluster-b
+      bootstrapServers: <IT_KAFKA_EXTERNAL_BOOTSTRAP>:9094
+      config:
+        config.storage.replication.factor: -1
+        offset.storage.replication.factor: -1
+        status.storage.replication.factor: -1
+  mirrors:
+    - sourceCluster: cluster-a
+      targetCluster: cluster-b
+      sourceConnector:
+        config:
+          replication.factor: -1
+          offset-syncs.topic.replication.factor: -1
+          sync.topic.acls.enabled: "false"
+      checkpointConnector:
+        config:
+          checkpoints.topic.replication.factor: -1
+      topicsPattern: ".*"
+      groupsPattern: ".*"
+

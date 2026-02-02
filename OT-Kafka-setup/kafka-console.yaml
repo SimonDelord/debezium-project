@@ -1,0 +1,15 @@
+# AMQ Streams Console CR
+# Provides a web UI for monitoring Kafka clusters
+# Namespace: debezium-demo
+apiVersion: console.streamshub.github.com/v1alpha1
+kind: Console
+metadata:
+  name: example-console
+  namespace: debezium-demo
+spec:
+  hostname: streams-console-debezium-demo.apps.<CLUSTER_DOMAIN>
+  kafkaClusters:
+    - name: my-cluster
+      namespace: debezium-demo
+      listener: plain
+

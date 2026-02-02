@@ -1,0 +1,20 @@
+# KafkaNodePool - Broker and Controller nodes (IT Environment)
+# 3 replicas for high availability
+# Namespace: it-kafka-demo
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+metadata:
+  name: my-pool
+  namespace: it-kafka-demo
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  replicas: 3
+  roles:
+    - controller
+    - broker
+  storage:
+    type: persistent-claim
+    size: 100Gi
+    class: gp3-csi
+

@@ -1,0 +1,19 @@
+# KafkaNodePool CR - Strimzi with KRaft mode
+# Namespace: debezium-demo
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+metadata:
+  name: my-pool
+  namespace: debezium-demo
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  replicas: 1
+  roles:
+    - broker
+    - controller
+  storage:
+    type: persistent-claim
+    size: 100Gi
+    class: gp3-csi
+
