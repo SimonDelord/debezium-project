@@ -1,0 +1,14 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+metadata:
+  name: my-pool
+  labels:
+    strimzi.io/cluster: my-cluster
+  namespace: kafka-demo
+spec:
+  roles:
+    - broker
+    - controller
+  storage:
+    type: ephemeral
+  replicas: 3
